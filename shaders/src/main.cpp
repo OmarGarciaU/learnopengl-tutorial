@@ -1,6 +1,7 @@
 #include "include/glad/glad.h"
 #include "include/GLFW/glfw3.h"
 #include "vec3.h"
+#include "shaders/shader.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -15,25 +16,6 @@ const unsigned int SCR_HEIGHT = 600;
 /*
  * Vertex Shader
 */
-const char *vertexShaderSource = 
-"#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-/*
- * Fragment Shader
-*/
-const char *fragmentShaderSource = 
-"#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
-
 
 int main() {
 
@@ -69,56 +51,16 @@ int main() {
   }
 
   // Build And Compile shader program
-  // -------------------------------
-  
-  //Initialize vertex Shader
-  unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glCompileShader(vertexShader);
-
-  //CATCH ERROR
-  int success;
-  char infoLog[512];
-  glGetShaderiv(vertexShader,GL_COMPILE_STATUS,&success);
-
-  if(!success){
-    glGetShaderInfoLog(vertexShader,512,NULL,infoLog);
-    std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-  }
-
-  //Initialize fragment Shader
-  unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-  glCompileShader(fragmentShader);
-  glGetShaderiv(fragmentShader,GL_COMPILE_STATUS,&success);
-  std::cout << "post-bugLine" << std::endl;
-  //CATCH ERROR
-  if(!success){
-    glGetShaderInfoLog(fragmentShader,512,NULL,infoLog);
-    std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-  }
-
-  //LINK SHADERS
-  unsigned int shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram,vertexShader);
-  glAttachShader(shaderProgram,fragmentShader);
-  glLinkProgram(shaderProgram);
-
-  //CATCH ERROR
-  if(!success){
-    glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-  }
-
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-
+  // ------------------------------- 
+  const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/shaders/src/shaders/shader.vs";
+  const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/shaders/src/shaders/shader.fs";
+  Shader Shader(vertPath,fragPath);
   // set up vertex data (and buffer(s)) and configure vertex attributes
   // ------------------------------------------------------------------
   float vertices[]{
-    -0.5f,  0.5f, 0.0f, // left index 
-    -0.5f, -0.5f, 0.0f, // right index
-     0.5f,  0.0f, 0.0f  // top   index
+     0.5f,  -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+     0.0f,   0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
   };
   
   unsigned int VAO, VBO;
@@ -130,31 +72,23 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(float), (void*)0);
+  glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
 
+  glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE, 6*sizeof(float),(void*)(3*sizeof(float)));
+  glEnableVertexAttribArray(1);
 
-  // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-  // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-  glBindVertexArray(0);
-  
-
-  glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  //glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
   //Random generator
   srand(time(0));
 
   //Generate a random color
-  color color(0.4,0.2,0.8);
+  color color(rand() % 255 / 255.0,rand() % 255 / 255.0,rand() % 255 / 255.0);
 
   double a = 1.0f;
 
   color.print_rgb();
-
-  unsigned int fps = 0;
 
   // render loop
   // -----------
@@ -167,7 +101,8 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
 
-    glUseProgram(shaderProgram);
+    Shader.use();
+    Shader.setFloat("someUniform", 1.0f);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -178,6 +113,9 @@ int main() {
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  glDeleteVertexArrays(1,&VAO);
+  glDeleteBuffers(1, &VBO);
 
   // glfw: terminate, clearing all previously allocated GLFW resources.
   // ------------------------------------------------------------------

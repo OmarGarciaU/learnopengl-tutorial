@@ -153,7 +153,7 @@ int main() {
   glBindVertexArray(0);
   
 
-  //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+  glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
   //Random generator
   srand(time(0));
