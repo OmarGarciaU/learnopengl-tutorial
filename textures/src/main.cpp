@@ -113,9 +113,6 @@ int main() {
         std::cout << "Failed to load texture" << std::endl;
     }
 
-    std::cout << "width=" << width << " height=" << height << " channels=" << nrChannels << std::endl;
-
-
     stbi_image_free(data);
 
     //Random generator
@@ -126,6 +123,7 @@ int main() {
     double a = 1.0f;
 
     color.print_rgb();
+
 
     while(!glfwWindowShouldClose(window)){
         //input
@@ -139,6 +137,28 @@ int main() {
 
         Shader.use();
         glBindVertexArray(VAO);
+
+        
+        for(int i = 0; i< 32; i+=8){
+            vertices[i] = vertices[i] + 0.05f;
+            if(vertices[i] > 1.0) vertices[i] = -1.0f;
+        }
+       
+        
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // n*sizeof(float) the stride i.e how many elements in each row
+        glEnableVertexAttribArray(0);
+
+        //color attribute
+        glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
+        glEnableVertexAttribArray(1);
+
+        //texture coordinate attribute
+        glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
+        glEnableVertexAttribArray(2);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glfwSwapBuffers(window);
