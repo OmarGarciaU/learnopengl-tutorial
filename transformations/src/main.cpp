@@ -168,33 +168,20 @@ int main() {
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
         transform = glm::rotate(transform, (float) glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 
-
-        Shader.use();
         unsigned int transformLoc = glGetUniformLocation(Shader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         
-        // for(int i = 0; i< 32; i+=8){
-        //     vertices[i] = vertices[i] + 0.05f;
-        //     if(vertices[i] > 1.0) vertices[i] = -1.0f;
-        //}
-        // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        //
-        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // n*sizeof(float) the stride i.e how many elements in each row
-        // glEnableVertexAttribArray(0);
-        //
-        // //color attribute
-        // glVertexAttribPointer(1,3,GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3*sizeof(float)));
-        // glEnableVertexAttribArray(1);
-        //
-        // //texture coordinate attribute
-        // glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE, 8 * sizeof(float), (void*)(6*sizeof(float)));
-        // glEnableVertexAttribArray(2);
+        transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
+        float scaleAmount = static_cast<float>(2.0f * sin(glfwGetTime()));
+        transform = glm::scale(transform, glm::vec3(scaleAmount, scaleAmount, scaleAmount));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, &transform[0][0]);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
