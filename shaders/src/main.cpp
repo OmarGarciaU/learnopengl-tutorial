@@ -100,7 +100,7 @@ int main() {
             click++;
         }else{
             for(int i = 0; i< 9; i+=3){
-                vertices[i] = vertices[i] + 0.05f;
+                vertices[i] = vertices[i] + 0.001f;
                 if(vertices[i] > 1.0) vertices[i] = -1.0f;
             }
             click = 0;
