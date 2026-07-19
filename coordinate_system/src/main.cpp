@@ -25,6 +25,9 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+float x_value = 0.0f;
+float y_value = 0.0f;
+
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -198,6 +201,8 @@ int main() {
     double a = 1.0f;
     color.print_rgb();
 
+    float fov = 45.0f;
+
     while(!glfwWindowShouldClose(window)){
         //input
         processInput(window);
@@ -218,8 +223,8 @@ int main() {
         //create transformations
         glm::mat4 view          = glm::mat4(1.0f);
         glm::mat4 projection    = glm::mat4(1.0f);
-        projection = glm::perspective(glm::radians(45.0f), (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
-        view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view  = glm::translate(view, glm::vec3(x_value, y_value, -3.0f));
 
         //perspective usually doesnt change so it is more effecient to set it outside the main loop
         Shader.setMat4("projection", projection);
@@ -250,6 +255,10 @@ int main() {
 
 void processInput(GLFWwindow *window){
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)    x_value -= 0.05f;
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)     x_value += 0.05f;
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)       y_value -= 0.05f;
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)     y_value += 0.05f;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
