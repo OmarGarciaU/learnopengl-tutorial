@@ -326,10 +326,12 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn){
     }
 
     glm::vec3 front;
-    front.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
+    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     front.y = sin(glm::radians(pitch));
     front.z = sin(glm::radians(yaw) * cos(glm::radians(pitch)));
     cameraFront = glm::normalize(front);
+
+    cout << "pitch: " << pitch << endl;
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset){
