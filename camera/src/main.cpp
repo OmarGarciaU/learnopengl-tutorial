@@ -7,7 +7,6 @@
 #include "include/glm/geometric.hpp"
 #include "include/glm/trigonometric.hpp"
 #include "shaders/shader.h"
-#include "vec3.h"
 #include <ctime>
 #include <iostream>
 #include <vector>
@@ -222,10 +221,6 @@ int main() {
 
     //Random color generator
     srand(time(0));
-    color color(0.5f, 0.2f, 0.9f);
-    double a = 1.0f;
-    color.print_rgb();
-
     std::vector<float> fps = {};
 
     while(!glfwWindowShouldClose(window)){
@@ -241,7 +236,7 @@ int main() {
         processInput(window);
 
         //render
-        glClearColor(color.x(), color.y(), color.z(), a);
+        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //bind textures
