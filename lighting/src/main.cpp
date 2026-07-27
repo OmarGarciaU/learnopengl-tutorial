@@ -167,13 +167,13 @@ int main() {
         processInput(window);
 
         //render
-        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
+        glClearColor(0.2f, 0.4f, 0.8f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //be sure to activate shader when setting uniforms/drawing objects
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f,0.5f,0.31f);
-        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+        lightingShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
 
         //create transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f,100.0f);
@@ -216,6 +216,8 @@ void processInput(GLFWwindow *window){
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera.ProcessKeyboard(BACKWARD, deltaTime);
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera.ProcessKeyboard(LEFT, deltaTime);
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera.ProcessKeyboard(RIGHT, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) camera.ProcessKeyboard(UP, deltaTime);
+    if(glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
