@@ -21,8 +21,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_HEIGHT = 1200;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
@@ -54,6 +54,7 @@ int main() {
     }
 
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
@@ -124,7 +125,6 @@ int main() {
          0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-    
 
     };
 
@@ -155,24 +155,24 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-
     //Random color generator
     srand(time(0));
     std::vector<float> fps = {};
 
     while(!glfwWindowShouldClose(window)){
+
         //per-frame time logic
         float currentFrame = static_cast<float>(glfwGetTime());
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        cout << 1.0f / deltaTime << endl;
+        //cout << 1.0f / deltaTime << endl;
 
         //input
         processInput(window);
 
         //render
-        glClearColor(0.2f, 0.4f, 0.8f, 1.0f);
+        glClearColor(0.1f, 0.1f, 0.6f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //be sure to activate shader when setting uniforms/drawing objects
@@ -180,6 +180,10 @@ int main() {
         lightingShader.setVec3("objectColor", 1.0f,0.5f,0.31f);
         lightingShader.setVec3("lightColor",  1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
+        lightingShader.setVec3("viewPos", camera.Position);
+
+        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+        lightPos.y = sin(glfwGetTime() / 2.0) *  1.0f;
 
         //create transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH/(float)SCR_HEIGHT, 0.1f,100.0f);
@@ -199,13 +203,12 @@ int main() {
         lightCubeShader.setMat4("projection", projection);
         lightCubeShader.setMat4("view", view);
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos); 
-        model = glm::scale(model, glm::vec3(0.2f));// a smalelr cube
+        model = glm::translate(model, lightPos);
+        model = glm::scale(model, glm::vec3(0.2f));// a smaller cube
         lightCubeShader.setMat4("model", model);
 
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        
 
         glfwSwapBuffers(window);
         glfwPollEvents();
