@@ -49,9 +49,13 @@ int main() {
 
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // Bottom left
-         0.5f, -0.5f, 0.0f, // Bottom Right
-         0.0f,  0.5f, 0.0f  // Top
+        -0.9f, -0.9f, 0.0f, // Bottom left
+         0.9f,  0.9f, 0.0f, // Top Right
+         0.9f, -0.9f, 0.0f,  // Bottom Right
+         
+        -0.9f, -0.9f, 0.0f, // Bottom left
+         0.9f,  0.9f, 0.0f, // Top Right
+        -0.9f,  0.9f, 0.0f,  // Top Left
     };
 
     unsigned int VAO, VBO;
@@ -76,13 +80,12 @@ int main() {
     //Random generator
     srand(time(0));
 
+
     color color(0.5f, 0.2f, 0.9f);
 
     double a = 1.0f;
 
     color.print_rgb();
-
-    int click = 0;
 
     while(!glfwWindowShouldClose(window)){
         //input
@@ -95,18 +98,6 @@ int main() {
 
         Shader.use();
         glBindVertexArray(VAO);
-        //update every thousand clicks
-        if(click < 15){
-            click++;
-        }else{
-            for(int i = 0; i< 9; i+=3){
-                vertices[i] = vertices[i] + 0.001f;
-                if(vertices[i] > 1.0) vertices[i] = -1.0f;
-            }
-            click = 0;
-        }
-
-        cout << click;
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -114,7 +105,7 @@ int main() {
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // 3*sizeof(float) the stride i.e how many elements in each row
         glEnableVertexAttribArray(0);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glfwSwapBuffers(window);
         glfwPollEvents();
 

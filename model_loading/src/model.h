@@ -1,10 +1,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "assimp/texture.h"
 #include "include/glad/glad.h"
 #include "include/glm/fwd.hpp"
-#include "include/glm/gtc/matrix_transform.hpp"
 #include "stb_image.h"
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
