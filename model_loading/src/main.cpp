@@ -93,7 +93,7 @@ int main() {
     // const char objPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/model_loading/src/resources/backpack.obj";
 
     //load models
-    Model ourModel(FileSystem::getPath("src/resources/backpack.obj"));
+    Model ourModel(FileSystem::getPath("src/resources/untitled.obj"));
     cout << "meshes loaded: " << ourModel.meshes.size() << endl;
 
     //Random color generator
@@ -127,12 +127,6 @@ int main() {
         //render loaded model
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.3f));
-        ourShader.setMat4("model", model);
-        ourModel.Draw(ourShader);
-
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.3f));
         ourShader.setMat4("model", model);
         ourModel.Draw(ourShader);
