@@ -1,0 +1,40 @@
+[
+  {
+    "file": "./src/main.cpp",
+    "arguments": [
+      "/usr/bin/clang++",
+      "-arch",
+      "arm64",
+      "./src/main.cpp",
+      "-o",
+      "./bin/Enigma",
+      "-g",
+      "-std=c++17",
+      "-I./src/include/GLFW",
+      "-I./src/include",
+      "-I./src/include/glad",
+      "-I/opt/homebrew/opt/assimp/include"
+    ],
+    "directory": "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl",
+    "output": "./bin/Enigma"
+  },
+  {
+    "file": "./src/include/glad/glad.c",
+    "arguments": [
+      "/usr/bin/clang++",
+      "-arch",
+      "arm64",
+      "./src/include/glad/glad.c",
+      "-o",
+      "./bin/Enigma",
+      "-g",
+      "-std=c++17",
+      "-I./src/include/GLFW",
+      "-I./src/include",
+      "-I./src/include/glad",
+      "-I/opt/homebrew/opt/assimp/include"
+    ],
+    "directory": "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl",
+    "output": "./bin/Enigma"
+  }
+]

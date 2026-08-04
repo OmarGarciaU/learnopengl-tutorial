@@ -1,0 +1,19 @@
+1) Instantiate vertex arrays     -> VAO
+2) Instantiate Buffers           -> VBO
+3) Bind vertex Array             -> VAO
+4) Bind buffer                   -> bufferType, VBO
+5) Set budder data               -> bufferType, sizeof(float), &float[], glStaticDraw
+
+Reading data depending on how its set in the array 
+For this example the data is setup as follows: (x,y,z, u,v) (aPos, aTexCoord)
+
+Read Positions
+6) Enable Vertex attribute array -> int:i(i starts at 0) location
+7) Set vertex Attribute pointer  -> int:i, int:j, glFloat, glFalse, stride, pointer location (i starts at 0, j starts at 3) j = length(3) i = location
+
+Read Texture
+8) Enable next vertex attribute array -> int:i (i = 1) next location
+9) Set next vertex attribute array potiner -> int:i, int:j, glFLoat, glFalse, stride, pointer location i = location, j = length(2)
+
+Reset VAO
+10) Bind vertex Array -> 0  
