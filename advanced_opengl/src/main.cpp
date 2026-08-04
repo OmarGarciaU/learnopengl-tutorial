@@ -199,7 +199,7 @@ int main() {
     glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     //load Textures
-    unsigned int cubeTexture = loadTexture(FileSystem::getPath("src/resources/marble.jpg").c_str());
+    unsigned int cubeTexture = loadTexture(FileSystem::getPath("src/resources/container2.png").c_str());
     unsigned int floorTexture = loadTexture(FileSystem::getPath("src/resources/metal.png").c_str());
 
     shader.use();
