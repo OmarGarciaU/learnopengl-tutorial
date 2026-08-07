@@ -90,13 +90,17 @@ int main() {
     const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.vs";
     const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.fs";
     const char geoPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.gs";
+    const char vertPath2[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/defualt.vs";
+    const char fragPath2[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/default.fs";
     //initialize shader
-    Shader shader(vertPath, fragPath, geoPath);
+    Shader shader(vertPath2, fragPath2);
+    Shader normalShader(vertPath, fragPath, geoPath);
     //model path
     // const char objPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/model_loading/src/resources/backpack.obj";
 
     //load models
-    Model nanosuit(FileSystem::getPath("src/resources/nanosuit/nanosuit.obj"));
+    stbi_set_flip_vertically_on_load(true);
+    Model backpack(FileSystem::getPath("src/resources/backpack/backpack.obj"));
     // cout << "meshes loaded: " << ourModel.meshes.size() << endl;
 
     //Random color generator
@@ -127,7 +131,14 @@ int main() {
         // add time component to geometry shader in the form of a uniform
         shader.setFloat("time", static_cast<float>(glfwGetTime()));
 
-        nanosuit.Draw(shader);
+        backpack.Draw(shader);
+
+        normalShader.use();
+        normalShader.setMat4("projection", projection);
+        normalShader.setMat4("view", view);
+        normalShader.setMat4("model", model);
+
+        backpack.Draw(normalShader);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
