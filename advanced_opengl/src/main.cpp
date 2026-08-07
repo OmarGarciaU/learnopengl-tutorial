@@ -1,5 +1,6 @@
 #include "filesystem.h"
 #include "glm/ext/matrix_float3x3.hpp"
+#include "glm/ext/matrix_transform.hpp"
 #include "include/glad/glad.h"
 #include "include/GLFW/glfw3.h"
 
@@ -86,112 +87,16 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     // congigure shaders file path
-    const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/advanced_glsl.vs";
-    const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/red.fs";
-    const char fragPath2[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/green.fs";
-    const char fragPath3[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/blue.fs";
-    const char fragPath4[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/yellow.fs";
+    const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.vs";
+    const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.fs";
+    const char geoPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/geometry_shader.gs";
     //initialize shader
-    Shader shaderRed(vertPath, fragPath);
-    Shader shaderGreen(vertPath, fragPath2);
-    Shader shaderBlue(vertPath, fragPath3);
-    Shader shaderYellow(vertPath, fragPath4);
-
+    Shader shader(vertPath, fragPath, geoPath);
     //model path
     // const char objPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/model_loading/src/resources/backpack.obj";
 
-    float cubeVertices[] = {
-        // positions         
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-
-        -0.5f, -0.5f,  0.5f, 
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
-
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-
-        -0.5f,  0.5f, -0.5f, 
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-    
-    };
-
-    //cube VAO
-    unsigned int cubeVAO, cubeVBO;
-    glGenVertexArrays(1, &cubeVAO);
-    glGenBuffers(1, &cubeVBO);
-    glBindVertexArray(cubeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), &cubeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0,3,GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    // configure a uniform buffer object
-    // ---------------------------------
-    // first. We get the relevant block indices
-    
-    //load Textures
-    //unsigned int cubeTexture = loadTexture(FileSystem::getPath("src/resources/container2.png").c_str());
-    //unsigned int floorTexture = loadTexture(FileSystem::getPath("src/resources/metal.png").c_str());
-
-    unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(shaderRed.ID, "Matrices");
-    unsigned int uniformBlockIndexGreen = glGetUniformBlockIndex(shaderGreen.ID, "Matrices");
-    unsigned int uniformBlockIndexBlue = glGetUniformBlockIndex(shaderBlue.ID, "Matrices");
-    unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(shaderYellow.ID, "Matrices");
-
-    // then we link each shader's uniform block to this uniform binding point
-    glUniformBlockBinding(shaderRed.ID, uniformBlockIndexRed, 0);
-    glUniformBlockBinding(shaderGreen.ID, uniformBlockIndexGreen, 0);
-    glUniformBlockBinding(shaderBlue.ID, uniformBlockIndexBlue, 0);
-    glUniformBlockBinding(shaderYellow.ID, uniformBlockIndexYellow, 0);
-
-
-    unsigned int uboMatrices;
-    glGenBuffers(1, &uboMatrices);
-    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    // define the range of the buffer that links to a uniform binding point
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
-
-    // store the projection matrix (we only do this once now) (note: we're not using zoom anymore by changing the FoV)
-    glm::mat4 projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
     //load models
-    // Model ourModel(FileSystem::getPath("src/resources/backpack.obj"));
+    Model nanosuit(FileSystem::getPath("src/resources/nanosuit/nanosuit.obj"));
     // cout << "meshes loaded: " << ourModel.meshes.size() << endl;
 
     //Random color generator
@@ -207,49 +112,29 @@ int main() {
         processInput(window);
 
         //render
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // set the view and projection matrix in the uniform block - we only have to do this once per loop iteration.
-        glm::mat4 view = camera.GetViewMatrix();
-        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-        // draw 4 cubes 
-        // RED
-        glBindVertexArray(cubeVAO);
-        shaderRed.use();
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 1.0f, 100.0f);
+        glm::mat4 view = camera.GetViewMatrix();;
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-0.75f, 0.75f, 0.0f)); // move top-left
-        shaderRed.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        // GREEN
-        shaderGreen.use();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.75f, 0.75f, 0.0f)); // move top-right
-        shaderGreen.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        // YELLOW
-        shaderYellow.use();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(-0.75f, -0.75f, 0.0f)); // move bottom-left
-        shaderYellow.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        // BLUE
-        shaderBlue.use();
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.75f, -0.75f, 0.0f)); // move bottom-right
-        shaderBlue.setMat4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        shader.use();
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", view);
+        shader.setMat4("model", model);
 
+
+        // add time component to geometry shader in the form of a uniform
+        shader.setFloat("time", static_cast<float>(glfwGetTime()));
+
+        nanosuit.Draw(shader);
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-
 
     glfwTerminate();
     return 0;
