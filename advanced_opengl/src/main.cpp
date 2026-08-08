@@ -86,10 +86,13 @@ int main() {
     glEnable(GL_DEPTH_TEST);
 
     // congigure shaders file path
-    const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/instancing.vs";
-    const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/instancing.fs";
+    const char vertPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/asteroids.vs";
+    const char fragPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/asteroids.fs";
+    const char vertPath2[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/planet.vs";
+    const char fragPath2[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/advanced_opengl/src/shaders/planet.fs";
     //initialize shader
-    Shader shader(vertPath, fragPath);
+    Shader asteroidShader(vertPath, fragPath);
+    Shader planetShader(vertPath2, fragPath2);
     //model path
     // const char objPath[] = "/Users/omargarcia/Desktop/Programming/Repos/Learning_and_Books/learnopengl-tutorial/model_loading/src/resources/backpack.obj";
 
@@ -105,12 +108,11 @@ int main() {
 
     // generate a large list of semi-random model transformation matrices
     // ------------------------------------------------------------------
-    unsigned int amount = 2000;
+    unsigned int amount = 100000;
     glm::mat4* modelMatrices;
     modelMatrices = new glm::mat4[amount];
-    srand(static_cast<unsigned int>(glfwGetTime())); // initialize random seed
-    float radius = 50.0;
-    float offset = 2.5f;
+    float radius = 150.0f;
+    float offset = 25.0f;
     for(unsigned int i{0}; i < amount; i++){
 
         //1. translation
@@ -137,6 +139,37 @@ int main() {
 
     }
 
+    //Configure instanced array
+    unsigned int buffer;
+    glGenBuffers(1, &buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
+
+
+    // set transformation matrices as an instance vertex attribute (with divisor 1)
+    // note: we're cheating a little by taking the, now publicly declared, VAO of the model's mesh(es) and adding new vertexAttribPointers
+    // normally you'd want to do this in a more organized fashion, but for learning purposes this will do.
+    // -----------------------------------------------------------------------------------------------------------------------------------
+    for(unsigned int i {0}; i < rock.meshes.size(); i++){
+        unsigned int VAO = rock.meshes[i].VAO;
+        glBindVertexArray(VAO);
+        glEnableVertexAttribArray(3);
+        glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+        glEnableVertexAttribArray(4);
+        glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+        glEnableVertexAttribArray(5);
+        glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(6);
+        glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+        glVertexAttribDivisor(3, 1);
+        glVertexAttribDivisor(4, 1);
+        glVertexAttribDivisor(5, 1);
+        glVertexAttribDivisor(6, 1);
+
+        glBindVertexArray(0);
+    }
+
     while(!glfwWindowShouldClose(window)){
         //per-frame time logic
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -153,21 +186,30 @@ int main() {
         // configure transformation matrices
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
         glm::mat4 view = camera.GetViewMatrix();
-        shader.use();
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
+        asteroidShader.use();
+        asteroidShader.setMat4("projection", projection);
+        asteroidShader.setMat4("view", view);
+
+        planetShader.use();
+        planetShader.setMat4("projection", projection);
+        planetShader.setMat4("view", view);
 
         // draw planet
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
         model = glm::scale(model, glm::vec3(4.0f,4.0f,4.0f));
-        shader.setMat4("model", model);
-        planet.Draw(shader);
+        planetShader.setMat4("model", model);
+        planet.Draw(planetShader);
 
-        //draw meteroites
-        for(unsigned int i = {0}; i < amount; i++){
-            shader.setMat4("model", modelMatrices[i]);
-            rock.Draw(shader);
+        asteroidShader.use();
+        asteroidShader.setInt("texture_diffuse1", 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, rock.textures_loaded[0].id);
+
+        for(unsigned int i{0}; i < rock.meshes.size(); i++){
+            glBindVertexArray(rock.meshes[i].VAO);
+            glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(rock.meshes[i].indices.size()), GL_UNSIGNED_INT, 0, amount);
+            glBindVertexArray(0);
         }
         
         //swap buffers
