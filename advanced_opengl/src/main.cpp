@@ -30,8 +30,8 @@ void processInput(GLFWwindow *window);
 unsigned int loadTexture(char const *path);
 unsigned int loadCubeMap(vector<std::string> faces);
 
-const unsigned int SCR_WIDTH = 1800;
-const unsigned int SCR_HEIGHT = 1200;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 900;
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
