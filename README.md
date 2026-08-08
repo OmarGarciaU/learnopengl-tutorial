@@ -23,10 +23,15 @@ I have edited all the .h files in include so that all headers are called properl
 Stores the necessary files and executables to run the program
 
 ## Running the code 
-Execute the makefile using the make command
+Execute the makefile using the make command and run the executable at once
 ```
 make && bin/myApp && cd ..
 ```
+
+## Best Way to use this repo
+Following the book code
+All you should be editing is the main.cpp file and shaders files
+build each new example with the code from the book
 
 ## Goals
 My first goal for this repo is to document my C++/C/OpenGL journey.
